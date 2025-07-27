@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+<div class="container my-3">
+    <!-- 질문 -->
+    <h2 class="border-bottom py-2">{{ shoe.name }}</h2>
+    <div class="card my-3">
+        <div class="card-body">
+            
+            
+            {% if shoe.photo %}
+            <img src="{{ shoe.photo.url }}" alt="{{ shoe.name }}" width="300">
+            <!-- <img src="/media/product_images/nike_airforce_260.jpg" alt="운동화" width="300"> -->
+            {% else %}
+            <p>이미지가 없습니다.</p>
+            {% endif %}
+            
+            
+
+            <div class="card-text" style="white-space: pre-line;">{{ shoe.description }}</div>
+
+
+            
+            <div class="d-flex justify-content-end">
+                <div class="badge bg-light text-dark p-2">
+                    가격: {{ shoe.price }} 원
+                </div>
+
+                {% if shoe.stock > 0 %}
+                <div class="badge bg-light text-dark p-2">
+                    재고: {{ shoe.stock }} 개
+                            
+
+
+
+                </div>
+                
+                {% else %}
+                <div class="badge bg-light  p-2" style="color:red">
+                    SOLD OUT
+                </div>
+                {% endif %}
+
+                <!-- <div class="badge bg-light text-dark p-2">
+                    {{ shoe.create_date }}
+                </div> -->
+            </div>
+
+                {% if shoe.stock > 0 %}
+
+            <div style="display: flex; gap: 10px;" >
+                <form action="{% url 'shoes:try_on' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="shoe_id" value="{{ shoe.id }}">
+                    <button class="btn btn-primary" >신어보기</button>
+                </form>
+                
+                <!-- <a href="{% url 'shoes:try_on' %}" class="btn btn-primary">신어보기</a> -->
+                <a  class="btn btn-primary">계산하기</a>
+
+            </div>
+
+
+                {% endif %}
+
+
+
+        </div>
+    </div>
+
+    
+
+
+
+
+
+    
+
+
+
+
+</div>
+
+{% endblock %}

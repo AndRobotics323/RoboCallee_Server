@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+<div class="container my-3">
+    <!-- 질문 -->
+    <div class="card my-3">
+        <div class="card-body">
+            
+
+            <div class="card-text" style="white-space: pre-line;">고객님의 주문 번호는 {{customer_id}} 입니다.</div>
+
+
+            
+            <div class="d-flex justify-content-end">
+                <div class="badge bg-light text-dark p-2">
+                    배달까지 예상 소요 시간은 {{estimated_mins}} 분입니다.
+                </div>
+
+            </div>
+
+
+
+
+
+
+        </div>
+    </div>
+
+    
+
+
+
+
+
+    
+
+
+
+
+</div>
+
+{% endblock %}

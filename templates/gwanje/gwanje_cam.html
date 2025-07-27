@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- 
+
+<img src="{% url 'gwanje:video_feed' %}" class="streaming-image" />
+
+<style>
+.streaming-image {
+    width: 1200px;
+    height: auto;
+    border: 2px solid black;
+}
+</style> 
+
+-->
+
+{% if user.is_authenticated %}
+
+
+<!-- <img src="{% url 'gwanje:video_feed' %}" width="1000" /> -->
+
+<!-- <h3>Detected Markers</h3> -->
+<!-- <ul id="marker-list"></ul> -->
+
+
+
+{% endif %}
+
+{% endblock %}
