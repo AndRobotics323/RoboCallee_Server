@@ -16,24 +16,46 @@ import numpy as np
 import cv2
 import rclpy
 from rclpy.node import Node
+import threading
 
 # Create your views here.
 
 
 
 
+ 
+# Python. 장고 버전
+# dev_num = 0
+dev_num = 2
+
+
+
+
+camera_instance = None  # 전역 객체
+ros_started = False     # 중복 실행 방지
+
+
+def start_ros2():
+    global camera_instance, ros_started, dev_num
+    if not ros_started:
+        rclpy.init()
+        base_path = '/home/addinedu/djangos/RoboCallee_Server/gwanje/'
+        camera_matrix = np.load(base_path + 'camera_matrix.npy')
+        dist_coeffs = np.load(base_path + 'dist_coeffs.npy')
+
+        camera_instance = VideoCamera(dev_num, camera_matrix, dist_coeffs)
+        thread = threading.Thread(target=camera_instance.run, daemon=True)
+        thread.start()
+        ros_started = True
+
+
 def gwanje_cam(request):
+    start_ros2()  # ROS2 노드 시작
 
     return render(request,  'gwanje/gwanje_cam.html'   )
                      
 
 
-
-# Python. 장고 버전
-dev_num = 0
-# dev_num = 2
-
-# camera_instance = VideoCamera(dev_num)
 
 def gen(camera):
     while True:
@@ -56,7 +78,6 @@ def markers_api(request):
 
 
 
-                              
 
 
 
@@ -122,9 +143,6 @@ def stream_generator():
                b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n')
 
 '''
-
-
-
 
 
 
