@@ -6,6 +6,7 @@ from django.http import HttpResponseNotAllowed
 
 from .camera import VideoCamera
 
+from .camera_jetco import run_ocr_from_flask
 
 import posix_ipc
 import mmap
@@ -20,15 +21,24 @@ import threading
 
 # Create your views here.
 
+def ocr_from_flask_stream(request):
+    # result_img_b64, text = run_ocr_from_flask()  # base64 인코딩된 이미지 + OCR 결과
+    result_img_b64, word_coords = run_ocr_from_flask()
 
-
+    return JsonResponse({
+              'image': result_img_b64,
+        'results': word_coords  # 리스트: [[(x1,y1), (x2,y2), ...], [...], ...]
+    })
 
  
+
+
+
 # Python. 장고 버전
-# dev_num = 0
-dev_num = 2
+dev_num = 0
+# dev_num = 2
 
-
+whether_gwanje = False
 
 
 camera_instance = None  # 전역 객체
@@ -36,6 +46,11 @@ ros_started = False     # 중복 실행 방지
 
 
 def start_ros2():
+
+    if not whether_gwanje:
+        return
+    
+
     global camera_instance, ros_started, dev_num
     if not ros_started:
         rclpy.init()

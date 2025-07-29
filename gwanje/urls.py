@@ -11,7 +11,7 @@ urlpatterns = [
     path('video_feed/', views.video_feed, name='video_feed'),
     # path('markers/', views.markers_api, name='markers_api'),
 
-
+    path('ocr_from_flask_stream/', views.ocr_from_flask_stream, name='ocr_from_flask_stream'),
 
 ]
 
