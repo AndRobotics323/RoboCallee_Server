@@ -1,7 +1,10 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from server_to_fms.srv import TryOnRequest
+# from server_to_fms.srv import TryOnRequest
+
+
+from robocallee_fms.srv import ShoeRequest 
 
 import rclpy
 from rclpy.node import Node
@@ -21,6 +24,7 @@ from django.db.models import Q
 
 # Create your views here.
 
+service_name = 'request_service'
 
 global_counter = 0
 
@@ -28,6 +32,8 @@ global_counter = 0
 
 def index(request):
     global global_counter
+
+
     request.session.set_expiry(3600)  # 초 단위
  
 
@@ -76,12 +82,16 @@ def detail(request, shoe_id):
 rclpy.init(args=None)
 
 node = rclpy.create_node('try_on_client')
-client = node.create_client(TryOnRequest, 'try_on_service')
+# client = node.create_client(TryOnRequest, 'try_on_service')
+client = node.create_client(ShoeRequest, service_name )
 
-if not client.wait_for_service(timeout_sec=3.0):
-    node.destroy_node()
-    rclpy.shutdown()
-    print("Service not available")
+while not client.wait_for_service(timeout_sec=1.0):
+    node.get_logger().info('Service not available, waiting again...')
+
+# if not client.wait_for_service(timeout_sec=3.0):
+#     node.destroy_node()
+#     rclpy.shutdown()
+#     print("Service not available")
 
 
 
@@ -102,9 +112,31 @@ def try_on(request):
 
 
             
-        req = TryOnRequest.Request()
-        req.customer_id = str(customer_id)
-        req.shoe_name = shoe.name
+        # req = TryOnRequest.Request()
+        # req.customer_id = str(customer_id)
+        # req.shoe_name = shoe.name
+
+
+        req = ShoeRequest.Request()
+
+        req.requester = "customer" 
+        req.model = shoe.model
+        req.size = shoe.size
+        req.color = shoe.color
+        # req.x = shoe.x
+        # req.y = shoe.y
+
+        req.x = int(shoe.x)
+        req.y = int(shoe.y) #여기 나중에 바뀌어야
+        req.customer_id = int(customer_id)
+
+# string requester
+# string model
+# int32 size
+# string color
+# int32 x
+# int32 y
+# int32 customer_id
 
         future = client.call_async(req)
         rclpy.spin_until_future_complete(node, future)
@@ -112,7 +144,15 @@ def try_on(request):
         if future.result() is not None:
             response = future.result()
 
-            estimated_mins = response.estimated_mins
+            
+            estimated_mins = -1
+            if response.accepted == True:
+                estimated_mins = 0
+            
+            # estimated_mins = response.estimated_mins
+
+
+
             # node.destroy_node()
             # rclpy.shutdown()
             # return response.success, response.message

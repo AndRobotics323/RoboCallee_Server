@@ -39,7 +39,7 @@
         <tr>
             <td>{{ forloop.counter }}</td>
             <td>
-                <a href="{% url 'shoes:detail' shoe.id %}">{{ shoe.name }}</a>
+                <a href="{% url 'shoes:detail' shoe.id %}">{{ shoe.model }} {{ shoe.size }}</a>
             </td>
             
             <td>{{ shoe.price }}</td>

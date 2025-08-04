@@ -6,13 +6,13 @@
 
 <div class="container my-3">
     <!-- 질문 -->
-    <h2 class="border-bottom py-2">{{ shoe.name }}</h2>
+    <h2 class="border-bottom py-2">{{ shoe.model }} {{ shoe.size }}</h2>
     <div class="card my-3">
         <div class="card-body">
             
             
             {% if shoe.photo %}
-            <img src="{{ shoe.photo.url }}" alt="{{ shoe.name }}" width="300">
+            <img src="{{ shoe.photo.url }}" alt="{{ shoe.model }}" width="300">
             <!-- <img src="/media/product_images/nike_airforce_260.jpg" alt="운동화" width="300"> -->
             {% else %}
             <p>이미지가 없습니다.</p>

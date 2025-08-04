@@ -6,7 +6,7 @@ from django.http import HttpResponseNotAllowed
 
 from .camera import VideoCamera
 
-from .camera_jetco import run_ocr_from_flask
+# from .camera_jetco import run_ocr_from_flask
 
 import posix_ipc
 import mmap

@@ -12,6 +12,7 @@ from tf2_ros import TransformBroadcaster
 from geometry_msgs.msg import TransformStamped
 import threading
 
+# from server_to_fms.srv import TryOnRequest
 
 
 def yaw_to_quaternion(yaw):
@@ -142,7 +143,12 @@ class VideoCamera(Node):
     def __init__(self, dev_num, camera_matrix, dist_coeffs):
         super().__init__('aruco_path_tracker_id')
         self.detector = ArucoDetector(camera_matrix, dist_coeffs)
+        
         self.cap = cv2.VideoCapture(dev_num)
+        self.cap.release()
+        self.cap = cv2.VideoCapture(dev_num)
+
+
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 

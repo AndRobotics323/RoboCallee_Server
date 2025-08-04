@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<!-- 
 
 
-<!-- <img src="{% url 'gwanje:video_feed' %}" class="streaming-image" /> -->
+<img src="{% url 'gwanje:video_feed' %}" class="streaming-image" />
 
 <style>
 .streaming-image {
@@ -14,7 +15,8 @@
 </style> 
 
 
-<!-- <div>
+
+<div>
 jetcobot_aa85
 <img src="http://192.168.0.167:5000/stream"  />
 </div>
@@ -23,20 +25,17 @@ jetcobot_aa85
 <button onclick="capture()">캡처 & OCR</button>
 <br>
 <img id="ocrResultImg" style="max-width: 300px;">
-<pre id="ocrText"></pre> -->
-
+<pre id="ocrText"></pre>
 
 
 <div style="display: flex; align-items: flex-start;">
 
-    <!-- 실시간 스트림 왼쪽 -->
   <div style="flex: 1; padding: 10px;">
     <img src="http://192.168.0.167:5000/stream" id="live" style="max-width: 100%;">
     <br>
     <button onclick="capture()">캡처 & OCR</button>
   </div>
 
-  <!-- OCR 결과 (오른쪽) -->
   <div style="flex: 1; padding: 10px;">
     <h3>OCR 결과 이미지</h3>
     <img id="ocrResultImg" style="max-width: 100%; border: 1px solid #ccc;">
@@ -44,8 +43,11 @@ jetcobot_aa85
     <pre id="ocrText" style="background: #f8f8f8; padding: 10px;"></pre>
   </div>
 </div>
+ -->
 
 
+
+<!-- 
 <script>
 
 
@@ -65,27 +67,9 @@ function capture() {
 }
 
 
-// function capture() {
-//     fetch('/gwanje/ocr_from_flask_stream/')
-//         .then(res => res.json())
-//         .then(data => {
-//             document.getElementById("ocrResultImg").src = "data:image/jpeg;base64," + data.image;
-//             document.getElementById("ocrText").textContent = data.text.join("\n");
-//         });
-// }
-
-
-// function capture() {
-//     fetch('/gwanje/ocr_from_flask_stream/')
-//         .then(res => res.json())
-//         .then(data => {
-//             // alert 창으로 OCR 텍스트 결과 보여주기
-//             alert("OCR 결과:\n" + data.text.join("\n"));
-//         });
-// }
 
 </script>
-
+ -->
 
 
 
