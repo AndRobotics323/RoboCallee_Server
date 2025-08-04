@@ -5,6 +5,8 @@ from django.utils import timezone
 
 
 from robocallee_fms.srv import ShoeRequest 
+from robocallee_fms.srv import DoneMsg 
+
 
 import rclpy
 from rclpy.node import Node
@@ -25,6 +27,7 @@ from django.db.models import Q
 # Create your views here.
 
 service_name = 'request_service'
+done_service_name = 'done_service'
 
 global_counter = 0
 
@@ -85,7 +88,13 @@ node = rclpy.create_node('try_on_client')
 # client = node.create_client(TryOnRequest, 'try_on_service')
 client = node.create_client(ShoeRequest, service_name )
 
+client_done = node.create_client(DoneMsg, done_service_name )
+
 while not client.wait_for_service(timeout_sec=1.0):
+    node.get_logger().info('Service not available, waiting again...')
+
+
+while not client_done.wait_for_service(timeout_sec=1.0):
     node.get_logger().info('Service not available, waiting again...')
 
 # if not client.wait_for_service(timeout_sec=3.0):
@@ -110,13 +119,6 @@ def try_on(request):
 
         customer_id = request.session.get('customer_id')
 
-
-            
-        # req = TryOnRequest.Request()
-        # req.customer_id = str(customer_id)
-        # req.shoe_name = shoe.name
-
-
         req = ShoeRequest.Request()
 
         req.requester = "customer" 
@@ -126,17 +128,9 @@ def try_on(request):
         # req.x = shoe.x
         # req.y = shoe.y
 
-        req.x = int(shoe.x)
-        req.y = int(shoe.y) #여기 나중에 바뀌어야
+        req.x = float(shoe.x)
+        req.y = float(shoe.y) #여기 나중에 바뀌어야
         req.customer_id = int(customer_id)
-
-# string requester
-# string model
-# int32 size
-# string color
-# int32 x
-# int32 y
-# int32 customer_id
 
         future = client.call_async(req)
         rclpy.spin_until_future_complete(node, future)
@@ -146,17 +140,14 @@ def try_on(request):
 
             
             estimated_mins = -1
-            if response.accepted == True:
-                estimated_mins = 0
+            # if response.accepted == True:
+                # estimated_mins = 0
             
+
+            wait_list = response.wait_list
             # estimated_mins = response.estimated_mins
 
-
-
-            # node.destroy_node()
-            # rclpy.shutdown()
-            # return response.success, response.message
-            return render(request, 'shoes/try_on.html', {'customer_id': customer_id, 'estimated_mins':estimated_mins} )
+            return render(request, 'shoes/try_on.html', {'customer_id': customer_id, 'wait_list':wait_list } )
 
         else:
             # node.destroy_node()
@@ -165,6 +156,42 @@ def try_on(request):
 
 
     return redirect('index')  # GET으로 접근한 경우
+
+
+
+def done_customer(request):
+
+    if request.method == 'POST':
+        
+        customer_id = request.session.get('customer_id')
+
+        req = DoneMsg.Request()
+
+        req.requester = "customer" 
+        req.customer_id = int(customer_id)
+
+        future = client_done.call_async(req)
+        rclpy.spin_until_future_complete(node, future)
+
+
+        print('done_customer future.get() 전')
+        if future.result() is not None:
+            response = future.result()
+
+            print('done_customer future.get() 후')
+            estimated_mins = -1
+            # if response.accepted == True:
+                # estimated_mins = 0
+            
+
+            accepted = response.accepted
+            if accepted:
+                print('상품 도착 완료, customer_id : ' + str(customer_id) )
+            
+            
+    return redirect('index')  # 완료 or GET으로 접근한 경우
+
+
 
 
 

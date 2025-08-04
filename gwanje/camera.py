@@ -204,7 +204,7 @@ class VideoCamera(Node):
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 128, 0), 2)
             cv2.putText(frame, f"XY: ({x:.2f}, {y:.2f})", (cx + 10, cy + 20),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 128, 0), 2)
-            cv2.putText(frame, f"Yaw: {yaw:.2f}", (cx + 10, cy + 40),
+            cv2.putText(frame, f"Yaw: {yaw:.2f}", (cx + 10, cy +40),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 128, 0), 2)
 
             # Path publisher
