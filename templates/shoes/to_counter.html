@@ -15,17 +15,11 @@
             
             <div class="d-flex justify-content-end">
                 <div class="badge bg-light text-dark p-2">
-                    현재 대기 인원은  {{wait_list}} 명입니다. {{fitting_area}} 로 이동해주십시오.
+                        로봇을 따라 계산대로 이동해주십시오.감사합니다.
                 </div>
 
             </div>
 
-
-                <form action="{% url 'shoes:done_customer' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="shoe_id" value="{{ shoe.id }}">
-                    <button class="btn btn-primary" >상품 도착시 클릭</button>
-                </form>
 
 
 

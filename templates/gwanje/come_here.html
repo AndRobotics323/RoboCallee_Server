@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+<div class="container my-3">
+    <!-- 질문 -->
+    <div class="card my-3">
+        <div class="card-body">
+            
+            <div class="d-flex justify-content-end">
+                <div class="badge bg-light text-dark p-2">
+                    현재 대기 인원은  {{wait_list}} 명입니다. 수거 장소로 이동해주십시오.
+                </div>
+
+            </div>
+
+
+                <form action="{% url 'gwanje:done_employee' %}" method="post">
+                    {% csrf_token %}
+
+                    <button class="btn btn-primary" >수거 완료시 클릭</button>
+                </form>
+
+
+
+        </div>
+    </div>
+
+    
+
+
+
+
+
+    
+
+
+
+
+</div>
+
+{% endblock %}

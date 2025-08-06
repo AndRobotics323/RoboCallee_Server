@@ -1,11 +1,10 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-# from server_to_fms.srv import TryOnRequest
 
 
-from robocallee_fms.srv import ShoeRequest 
-from robocallee_fms.srv import DoneMsg 
+
+from robocallee_fms.srv import CustomerRequest 
 
 
 import rclpy
@@ -26,8 +25,7 @@ from django.db.models import Q
 
 # Create your views here.
 
-service_name = 'request_service'
-done_service_name = 'done_service'
+service_name = 'customer_service'
 
 global_counter = 0
 
@@ -76,8 +74,9 @@ def detail(request, shoe_id):
 
 
 
+def to_counter(request):
 
-
+    return render(request, 'shoes/to_counter.html')
 
 
 # rclpy 관련
@@ -85,22 +84,12 @@ def detail(request, shoe_id):
 rclpy.init(args=None)
 
 node = rclpy.create_node('try_on_client')
-# client = node.create_client(TryOnRequest, 'try_on_service')
-client = node.create_client(ShoeRequest, service_name )
+client = node.create_client(CustomerRequest, service_name )
 
-client_done = node.create_client(DoneMsg, done_service_name )
 
 while not client.wait_for_service(timeout_sec=1.0):
     node.get_logger().info('Service not available, waiting again...')
 
-
-while not client_done.wait_for_service(timeout_sec=1.0):
-    node.get_logger().info('Service not available, waiting again...')
-
-# if not client.wait_for_service(timeout_sec=3.0):
-#     node.destroy_node()
-#     rclpy.shutdown()
-#     print("Service not available")
 
 
 
@@ -110,26 +99,18 @@ def try_on(request):
         shoe_id = request.POST.get('shoe_id')
         shoe = get_object_or_404(Product, id=shoe_id)
 
-        if shoe.stock > 0:
-            shoe.stock -= 1
-            shoe.save()
-            # message = f"{shoe.name} 구매 완료! 남은 재고: {shoe.stock}"
-        else:
-            message = f"{shoe.name} 품절입니다."
-
         customer_id = request.session.get('customer_id')
+        fitting_area = shoe.fitting_area
 
-        req = ShoeRequest.Request()
+        req = CustomerRequest.Request()
 
         req.requester = "customer" 
+        req.action = "come_here" 
         req.model = shoe.model
         req.size = shoe.size
         req.color = shoe.color
-        # req.x = shoe.x
-        # req.y = shoe.y
-
         req.x = float(shoe.x)
-        req.y = float(shoe.y) #여기 나중에 바뀌어야
+        req.y = float(shoe.y) 
         req.customer_id = int(customer_id)
 
         future = client.call_async(req)
@@ -137,17 +118,9 @@ def try_on(request):
 
         if future.result() is not None:
             response = future.result()
-
-            
-            estimated_mins = -1
-            # if response.accepted == True:
-                # estimated_mins = 0
-            
-
             wait_list = response.wait_list
-            # estimated_mins = response.estimated_mins
 
-            return render(request, 'shoes/try_on.html', {'customer_id': customer_id, 'wait_list':wait_list } )
+            return render(request, 'shoes/try_on.html', {'customer_id': customer_id, 'wait_list':wait_list, 'fitting_area' : fitting_area } )
 
         else:
             # node.destroy_node()
@@ -165,28 +138,33 @@ def done_customer(request):
         
         customer_id = request.session.get('customer_id')
 
-        req = DoneMsg.Request()
+        req = CustomerRequest.Request()
 
         req.requester = "customer" 
+        req.action = "done" 
+        req.model = "done"
+        req.size = int(-1)
+        req.color = "done"
+        req.x = float(-1.0)
+        req.y = float(-1.0)
         req.customer_id = int(customer_id)
 
-        future = client_done.call_async(req)
+        future = client.call_async(req)
         rclpy.spin_until_future_complete(node, future)
 
 
-        print('done_customer future.get() 전')
+        
         if future.result() is not None:
             response = future.result()
-
-            print('done_customer future.get() 후')
-            estimated_mins = -1
-            # if response.accepted == True:
-                # estimated_mins = 0
-            
-
-            accepted = response.accepted
-            if accepted:
+            success = response.success
+            if success:
                 print('상품 도착 완료, customer_id : ' + str(customer_id) )
+
+        else:
+            # node.destroy_node()
+            # rclpy.shutdown()
+            print("Service call failed" )
+
             
             
     return redirect('index')  # 완료 or GET으로 접근한 경우
@@ -194,11 +172,3 @@ def done_customer(request):
 
 
 
-
-
-
-    # context = {'shoe': shoe}
-
-
-
-    # return render(request, 'shoes/try_on.html', context)

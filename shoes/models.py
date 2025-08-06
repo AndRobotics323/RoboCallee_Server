@@ -17,6 +17,7 @@ class Product(models.Model):
 
     x = models.FloatField(default=0.0)  # 🔥 x 좌표
     y = models.FloatField(default=0.0)  # 🔥 y 좌표
+    fitting_area = models.CharField(max_length=200)  # 신발 신어볼 소파
 
 
     photo = models.ImageField(upload_to='product_images/', null=True, blank=True)

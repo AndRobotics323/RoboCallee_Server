@@ -13,6 +13,13 @@ urlpatterns = [
 
     path('ocr_from_flask_stream/', views.ocr_from_flask_stream, name='ocr_from_flask_stream'),
 
+
+    path('come_here/', views.come_here, name='come_here'),
+    path('done_employee/', views.done_employee, name='done_employee'),
+
+
+
+
 ]
 
 

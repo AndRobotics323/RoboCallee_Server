@@ -19,6 +19,94 @@ import rclpy
 from rclpy.node import Node
 import threading
 
+
+from robocallee_fms.srv import EmployeeRequest 
+
+
+
+
+
+
+################### ROS service 관련
+
+service_name = 'employee_service'
+
+node = rclpy.create_node('pick_up_employee')
+client = node.create_client(EmployeeRequest, service_name )
+
+
+while not client.wait_for_service(timeout_sec=1.0):
+    node.get_logger().info('Service not available, waiting again...')
+
+
+
+
+def come_here(request):
+
+    if request.method == 'POST':
+
+        customer_id = request.session.get('customer_id')
+        req = EmployeeRequest.Request()
+
+        req.requester = "employee" 
+        req.action = "come_here" 
+        future = client.call_async(req)
+        rclpy.spin_until_future_complete(node, future)
+
+        if future.result() is not None:
+            response = future.result()
+            wait_list = response.wait_list
+
+            return render(request, 'gwanje/come_here.html', {'customer_id': customer_id, 'wait_list':wait_list } )
+
+        else:
+            # node.destroy_node()
+            # rclpy.shutdown()
+            print("Service call failed" )
+
+
+    return redirect('gwanje:gwanje_cam')  # 완료 or GET으로 접근한 경우
+
+
+
+def done_employee(request):
+
+    if request.method == 'POST':
+        
+        customer_id = request.session.get('customer_id')
+        req = EmployeeRequest.Request()
+
+        req.requester = "employee" 
+        req.action = "done" 
+      
+
+        future = client.call_async(req)
+        rclpy.spin_until_future_complete(node, future)
+
+
+        
+        if future.result() is not None:
+            response = future.result()
+            success = response.success
+            if success:
+                print('수거 완료')
+
+        else:
+            # node.destroy_node()
+            # rclpy.shutdown()
+            print("Service call failed" )
+
+            
+            
+    return redirect('gwanje:gwanje_cam')  # 완료 or GET으로 접근한 경우
+
+
+######################333333
+
+
+
+
+
 # Create your views here.
 
 def ocr_from_flask_stream(request):
@@ -45,6 +133,13 @@ camera_instance = None  # 전역 객체
 ros_started = False     # 중복 실행 방지
 
 
+
+# if not ros_started:
+#     rclpy.init()
+#     ros_started = True
+
+
+
 def start_ros2():
 
     if not whether_gwanje:
@@ -62,6 +157,7 @@ def start_ros2():
         thread = threading.Thread(target=camera_instance.run, daemon=True)
         thread.start()
         ros_started = True
+
 
 
 def gwanje_cam(request):
@@ -90,9 +186,6 @@ def video_feed(request):
 def markers_api(request):
     data = camera_instance.get_markers()
     return JsonResponse(data, safe=False)
-
-
-
 
 
 

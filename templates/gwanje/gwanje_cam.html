@@ -1,6 +1,25 @@
 {% extends 'base.html' %}
 {% block content %}
 
+
+
+
+<div style="display: flex; gap: 10px;" >
+
+    
+    <!-- <a href="{% url 'shoes:try_on' %}" class="btn btn-primary">신어보기</a> -->
+    <!-- <a href="{% url 'gwanje:come_here' %}" class="btn btn-primary" method="post">수거함으로 로봇 부르기</a> -->
+
+
+                    <form action="{% url 'gwanje:come_here' %}" method="post">
+                    {% csrf_token %}
+
+                    <button class="btn btn-primary" >수거함으로 로봇 부르기</button>
+                </form>
+
+</div>
+
+
 <!-- 
 
 
@@ -13,6 +32,9 @@
     border: 2px solid black;
 }
 </style> 
+
+
+
 
 
 
