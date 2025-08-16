@@ -119,6 +119,18 @@ def ocr_from_flask_stream(request):
     })
 
  
+def april_from_flask_stream(request):
+    # result_img_b64, text = run_ocr_from_flask()  # base64 인코딩된 이미지 + OCR 결과
+    result_img_b64, word_coords = detect_april_from_flask()
+
+    return JsonResponse({
+              'image': result_img_b64,
+        'results': word_coords  # 리스트: [[(x1,y1), (x2,y2), ...], [...], ...]
+    })
+
+
+
+
 
 
 
