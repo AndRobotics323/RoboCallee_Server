@@ -6,7 +6,7 @@ from django.http import HttpResponseNotAllowed
 
 from .camera import VideoCamera
 
-# from .camera_jetco import run_ocr_from_flask
+from .camera_jetco import run_ocr_from_flask
 
 import posix_ipc
 import mmap
@@ -22,6 +22,7 @@ import threading
 
 from robocallee_fms.srv import EmployeeRequest 
 
+from django.views.decorators.csrf import csrf_exempt
 
 
 
@@ -108,7 +109,7 @@ def done_employee(request):
 
 
 # Create your views here.
-
+@csrf_exempt
 def ocr_from_flask_stream(request):
     # result_img_b64, text = run_ocr_from_flask()  # base64 인코딩된 이미지 + OCR 결과
     result_img_b64, word_coords = run_ocr_from_flask()
@@ -118,7 +119,7 @@ def ocr_from_flask_stream(request):
         'results': word_coords  # 리스트: [[(x1,y1), (x2,y2), ...], [...], ...]
     })
 
- 
+@csrf_exempt
 def april_from_flask_stream(request):
     # result_img_b64, text = run_ocr_from_flask()  # base64 인코딩된 이미지 + OCR 결과
     result_img_b64, word_coords = detect_april_from_flask()

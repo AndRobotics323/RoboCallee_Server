@@ -25,6 +25,11 @@ SECRET_KEY = 'django-insecure-wcn!7vr7$=8)4k!i@e1x2e0n$$7p-_segylrj1h&$10!x(71$0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://robocallee.jp.ngrok.io",
+]
+
 ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1', '.ngrok-free.app']
 
 

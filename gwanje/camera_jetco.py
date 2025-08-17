@@ -7,7 +7,6 @@ import base64
 from pupil_apriltags import Detector
 
 
-
 # streaming_flask_url = "http://192.168.0.168:5000/stream" # arm2 주소임
 streaming_flask_url = "http://192.168.35.138:5000/stream"
 
@@ -30,9 +29,9 @@ reader = easyocr.Reader(['ko', 'en'], gpu=False)
 
 
 
-
+ 
 def run_ocr_from_flask():
-    stream = requests.get(, stream=True)
+    stream = requests.get(streaming_flask_url, stream=True)
     byte_data = b''
 
     for chunk in stream.iter_content(chunk_size=1024):
@@ -47,6 +46,7 @@ def run_ocr_from_flask():
 
     result = reader.readtext(frame)
 
+    img_b64 = None
     word_coords = []
 
     for (bbox, text, conf) in result:
@@ -84,7 +84,7 @@ def run_ocr_from_flask():
 ### 이용해도 됨
 
 def detect_april_from_flask():
-    stream = requests.get(, stream=True)
+    stream = requests.get(streaming_flask_url, stream=True)
     byte_data = b''
 
     for chunk in stream.iter_content(chunk_size=1024):
